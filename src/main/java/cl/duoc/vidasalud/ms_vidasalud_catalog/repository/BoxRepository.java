@@ -6,4 +6,4 @@ import cl.duoc.vidasalud.ms_vidasalud_catalog.model.Box;
 
 public interface BoxRepository
         extends JpaRepository<Box, Long> {
-}
+}

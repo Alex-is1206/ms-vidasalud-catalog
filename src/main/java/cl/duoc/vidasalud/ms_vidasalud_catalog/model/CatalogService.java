@@ -42,4 +42,4 @@ public class CatalogService {
 
     @Column(name = "ACTIVO", nullable = false)
     private Boolean activo;
-}
+}

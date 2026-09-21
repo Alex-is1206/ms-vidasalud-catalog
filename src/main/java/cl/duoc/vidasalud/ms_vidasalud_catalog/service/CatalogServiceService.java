@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import cl.duoc.vidasalud.ms_vidasalud_catalog.exception.NotFoundException;
 import cl.duoc.vidasalud.ms_vidasalud_catalog.model.CatalogService;
 import cl.duoc.vidasalud.ms_vidasalud_catalog.repository.CatalogServiceRepository;
 
@@ -37,7 +38,7 @@ public class CatalogServiceService {
     public CatalogService buscarPorId(Long id) {
         return repository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException(
+                        new NotFoundException(
                                 "Prestación no encontrada con ID: " + id
                         )
                 );
@@ -60,4 +61,4 @@ public class CatalogServiceService {
 
         return repository.save(existente);
     }
-}
+}

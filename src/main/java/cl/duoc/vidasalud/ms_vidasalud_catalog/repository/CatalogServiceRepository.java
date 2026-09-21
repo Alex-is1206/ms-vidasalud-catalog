@@ -6,4 +6,4 @@ import cl.duoc.vidasalud.ms_vidasalud_catalog.model.CatalogService;
 
 public interface CatalogServiceRepository
         extends JpaRepository<CatalogService, Long> {
-}
+}

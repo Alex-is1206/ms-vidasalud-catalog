@@ -25,4 +25,4 @@ public record CatalogServiceRequest(
         Boolean activo
 
 ) {
-}
+}

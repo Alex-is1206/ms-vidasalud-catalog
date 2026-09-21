@@ -16,4 +16,4 @@ public record BoxRequest(
         Boolean activo
 
 ) {
-}
+}

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import cl.duoc.vidasalud.ms_vidasalud_catalog.exception.NotFoundException;
 import cl.duoc.vidasalud.ms_vidasalud_catalog.model.Box;
 import cl.duoc.vidasalud.ms_vidasalud_catalog.repository.BoxRepository;
 
@@ -34,7 +35,7 @@ public class BoxService {
     public Box buscarPorId(Long id) {
         return repository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException(
+                        new NotFoundException(
                                 "Box no encontrado con ID: " + id
                         )
                 );
@@ -50,4 +51,4 @@ public class BoxService {
 
         return repository.save(existente);
     }
-}
+}

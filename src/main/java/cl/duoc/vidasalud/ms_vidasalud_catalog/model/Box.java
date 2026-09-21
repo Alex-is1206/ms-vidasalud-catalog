@@ -34,4 +34,4 @@ public class Box {
 
     @Column(name = "ACTIVO", nullable = false)
     private Boolean activo;
-}
+}

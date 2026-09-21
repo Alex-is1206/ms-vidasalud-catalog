@@ -76,4 +76,4 @@ public class CatalogController {
 
         return service.actualizar(id, datosActualizados);
     }
-}
+}

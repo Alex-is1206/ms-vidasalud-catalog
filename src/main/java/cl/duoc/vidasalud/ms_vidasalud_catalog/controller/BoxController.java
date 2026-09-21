@@ -72,4 +72,4 @@ public class BoxController {
 
         return service.actualizar(id, datosActualizados);
     }
-}
+}
