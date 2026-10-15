@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import cl.duoc.vidasalud.ms_vidasalud_catalog.exception.NotFoundException;
+import cl.duoc.vidasalud.ms_vidasalud_catalog.mensajeria.PublicadorCatalogo;
 import cl.duoc.vidasalud.ms_vidasalud_catalog.model.Box;
 import cl.duoc.vidasalud.ms_vidasalud_catalog.repository.BoxRepository;
 
@@ -12,9 +13,11 @@ import cl.duoc.vidasalud.ms_vidasalud_catalog.repository.BoxRepository;
 public class BoxService {
 
     private final BoxRepository repository;
+    private final PublicadorCatalogo publicador;
 
-    public BoxService(BoxRepository repository) {
+    public BoxService(BoxRepository repository, PublicadorCatalogo publicador) {
         this.repository = repository;
+        this.publicador = publicador;
     }
 
     public Box crear(Box box) {
@@ -25,7 +28,12 @@ public class BoxService {
             box.setActivo(true);
         }
 
-        return repository.save(box);
+        Box guardado = repository.save(box);
+
+        // El evento sale solo despues de que el box quedo en la base de datos
+        publicador.cambioRegistrado("box", "CREADO", guardado.getId(), "sistema");
+
+        return guardado;
     }
 
     public List<Box> listar() {
@@ -49,6 +57,10 @@ public class BoxService {
         existente.setCapacidad(datosActualizados.getCapacidad());
         existente.setActivo(datosActualizados.getActivo());
 
-        return repository.save(existente);
+        Box guardado = repository.save(existente);
+
+        publicador.cambioRegistrado("box", "ACTUALIZADO", guardado.getId(), "sistema");
+
+        return guardado;
     }
-}
+}

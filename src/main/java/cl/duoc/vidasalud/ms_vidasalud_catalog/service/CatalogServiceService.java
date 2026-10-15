@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import cl.duoc.vidasalud.ms_vidasalud_catalog.exception.NotFoundException;
+import cl.duoc.vidasalud.ms_vidasalud_catalog.mensajeria.PublicadorCatalogo;
 import cl.duoc.vidasalud.ms_vidasalud_catalog.model.CatalogService;
 import cl.duoc.vidasalud.ms_vidasalud_catalog.repository.CatalogServiceRepository;
 
@@ -12,9 +13,12 @@ import cl.duoc.vidasalud.ms_vidasalud_catalog.repository.CatalogServiceRepositor
 public class CatalogServiceService {
 
     private final CatalogServiceRepository repository;
+    private final PublicadorCatalogo publicador;
 
-    public CatalogServiceService(CatalogServiceRepository repository) {
+    public CatalogServiceService(CatalogServiceRepository repository,
+                                 PublicadorCatalogo publicador) {
         this.repository = repository;
+        this.publicador = publicador;
     }
 
     // Crear prestación
@@ -26,7 +30,11 @@ public class CatalogServiceService {
             servicio.setActivo(true);
         }
 
-        return repository.save(servicio);
+        CatalogService guardada = repository.save(servicio);
+
+        publicador.cambioRegistrado("prestacion", "CREADO", guardada.getId(), "sistema");
+
+        return guardada;
     }
 
     // Listar prestaciones
@@ -59,6 +67,10 @@ public class CatalogServiceService {
         );
         existente.setActivo(datosActualizados.getActivo());
 
-        return repository.save(existente);
+        CatalogService guardada = repository.save(existente);
+
+        publicador.cambioRegistrado("prestacion", "ACTUALIZADO", guardada.getId(), "sistema");
+
+        return guardada;
     }
-}
+}
