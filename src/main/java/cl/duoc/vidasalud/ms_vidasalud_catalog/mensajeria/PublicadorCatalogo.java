@@ -9,12 +9,13 @@ import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
+import cl.duoc.vidasalud.ms_vidasalud_catalog.config.NombresRabbit;
 import cl.duoc.vidasalud.ms_vidasalud_catalog.config.RabbitProductorConfig;
 import cl.duoc.vidasalud.ms_vidasalud_catalog.evento.EventoVidaSalud;
 
 /**
- * Publica en el exchange direct cada cambio del catalogo, para que quede
- * registrado en la cola de auditoria.
+ * Publica en el exchange direct configurado en NombresRabbit cada cambio del
+ * catalogo, para que quede registrado en la cola de auditoria.
  *
  * Un fallo de mensajeria se registra pero no revierte el cambio que ya se
  * guardo en la base de datos.
@@ -25,9 +26,11 @@ public class PublicadorCatalogo {
     private static final Logger log = LoggerFactory.getLogger(PublicadorCatalogo.class);
 
     private final RabbitTemplate rabbitTemplate;
+    private final NombresRabbit nombres;
 
-    public PublicadorCatalogo(RabbitTemplate rabbitTemplate) {
+    public PublicadorCatalogo(RabbitTemplate rabbitTemplate, NombresRabbit nombres) {
         this.rabbitTemplate = rabbitTemplate;
+        this.nombres = nombres;
     }
 
     /**
@@ -46,10 +49,13 @@ public class PublicadorCatalogo {
         datos.put("usuario", usuario != null ? usuario : "desconocido");
 
         EventoVidaSalud evento = EventoVidaSalud.de("catalogo.cambio", null, datos);
+        String exchangeDestino = (nombres != null && nombres.exchangeDirect() != null)
+                ? nombres.exchangeDirect()
+                : RabbitProductorConfig.EXCHANGE_DIRECT;
 
         try {
             rabbitTemplate.convertAndSend(
-                    RabbitProductorConfig.EXCHANGE_DIRECT,
+                    exchangeDestino,
                     RabbitProductorConfig.RK_CATALOGO_CAMBIO,
                     evento,
                     new CorrelationData(evento.eventId()));

@@ -14,8 +14,8 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Configuracion del lado productor del catalogo.
  *
- * Usa un exchange de tipo direct porque sus eventos tienen un unico destino
- * conocido: la cola de auditoria.
+ * Usa un exchange de tipo direct cuyo nombre se lee desde NombresRabbit
+ * porque sus eventos tienen un unico destino conocido: la cola de auditoria.
  */
 @Configuration
 public class RabbitProductorConfig {
@@ -25,9 +25,18 @@ public class RabbitProductorConfig {
     public static final String EXCHANGE_DIRECT = "cmd.direct";
     public static final String RK_CATALOGO_CAMBIO = "catalogo.cambio";
 
+    private final NombresRabbit nombres;
+
+    public RabbitProductorConfig(NombresRabbit nombres) {
+        this.nombres = nombres;
+    }
+
     @Bean
     DirectExchange exchangeCatalogo() {
-        return new DirectExchange(EXCHANGE_DIRECT, true, false);
+        String nombreExchange = (nombres != null && nombres.exchangeDirect() != null)
+                ? nombres.exchangeDirect()
+                : EXCHANGE_DIRECT;
+        return new DirectExchange(nombreExchange, true, false);
     }
 
     @Bean
